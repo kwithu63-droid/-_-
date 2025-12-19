@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Balance Leadership 진단</title>
+<style>
+  :root {
+    --bg-main: #0b1020;
+    --card-bg: #111728;
+    --accent: #e0b973;
+    --accent-soft: rgba(224,185,115,0.2);
+    --text-main: #f5f5f7;
+    --text-muted: #a0a4b8;
+    --danger: #ff6b6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: radial-gradient(circle at top, #222a3f 0, #050712 55%, #020208 100%);
+    color: var(--text-main);
+  }
+  .wrapper {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  header h1 {
+    font-size: 2.1rem;
+    letter-spacing: 0.08em;
+    margin: 0 0 6px;
+  }
+  header h1 span {
+    color: var(--accent);
+  }
+  header p {
+    margin: 4px 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(224,185,115,0.3);
+    color: var(--accent);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .panel {
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.07);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+    backdrop-filter: blur(18px);
+    padding: 22px 20px;
+    margin-bottom: 24px;
+  }
+  .scale-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+  .scale-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chip {
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.8rem;
+  }
+
+  .section-title {
+    font-size: 1.05rem;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .section-title span.label {
+    font-weight: 600;
+  }
+  .section-title span.range {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  table.survey {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  table.survey th,
+  table.survey td {
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    vertical-align: middle;
+  }
+  table.survey th {
+    font-weight: 500;
+    text-align: left;
+    color: var(--text-muted);
+  }
+  table.survey thead th {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+  table.survey tbody th {
+    width: 40px;
+    text-align: center;
+    color: var(--accent);
+  }
+  table.survey tbody td.question {
+    width: 60%;
+  }
+  table.survey tbody td.scale {
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .radio-pill {
+    position: relative;
+    margin: 0 1px;
+  }
+  .radio-pill input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .radio-pill label {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text-muted);
+    transition: all 0.18s ease;
+    background: rgba(5,7,20,0.8);
+  }
+  .radio-pill input[type="radio"]:checked + label {
+    background: radial-gradient(circle at 30% 0, #fff 0, var(--accent) 45%, #c88e39 100%);
+    border-color: rgba(255,255,255,0.5);
+    color: #111;
+    font-weight: 600;
+    box-shadow: 0 0 0 1px rgba(224,185,115,0.7), 0 5px 14px rgba(0,0,0,0.7);
+  }
+  .radio-pill input[type="radio"]:focus-visible + label {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+  .btn {
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.18s ease;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #e0b973, #c9883c);
+    color: #111;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.65);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 26px rgba(0,0,0,0.8);
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--text-main);
+  }
+  .btn-outline:hover {
+    background: rgba(255,255,255,0.05);
+  }
+
+  .error {
+    margin-top: 6px;
+    font-size: 0.8rem;
+    color: var(--danger);
+  }
+  .row-error {
+    background: rgba(255,107,107,0.08);
+  }
+
+  #result-panel {
+    margin-top: 28px;
+    display: none;
+  }
+
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .result-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  .result-header span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .result-card {
+    border-radius: 14px;
+    padding: 12px 12px 10px;
+    background: radial-gradient(circle at top left, rgba(224,185,115,0.18), rgba(7,10,26,0.95));
+    border: 1px solid rgba(224,185,115,0.35);
+  }
+  .result-card h3 {
+    margin: 0 0 4px;
+    font-size: 0.98rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .result-card h3 span.score {
+    font-size: 0.9rem;
+    color: #ffe9bc;
+  }
+  .result-card .subformula {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .badge-soft {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .dev-text {
+    font-size: 0.8rem;
+    color: #f8f0de;
+    line-height: 1.5;
+  }
+
+  .hint-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  @media (max-width: 720px) {
+    .panel { padding: 18px 14px; }
+    header h1 { font-size: 1.6rem; }
+    table.survey thead { display: none; }
+    table.survey, table.survey tbody, table.survey tr, table.survey td, table.survey th {
+      display: block;
+      width: 100%;
+    }
+    table.survey tbody tr {
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    table.survey tbody th {
+      text-align: left;
+      margin-bottom: 2px;
+    }
+    table.survey tbody td.scale {
+      margin-top: 6px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="badge">BALANCE LEADERSHIP DIAGNOSTIC</div>
+    <h1><span>Balance</span> Leadership 진단</h1>
+    <p>영향력 있는 리더는 제안·구조화·논리·결론, 카리스마와 감성, 자각 유도와 감성 합일의 균형을 통해 설득합니다.[file:18]</p>
+    <p style="font-size:0.85rem;">아래 문항에 대해, 본인의 평소 행동에 가장 가까운 점수를 선택해 주세요.</p>
+  </header>
+
+  <!-- 척도 안내 -->
+  <div class="panel">
+    <div class="scale-info">
+      <div>평정 척도: <strong>1</strong> 전혀 아니다 · <strong>2</strong> 대체로 아니다 · <strong>3</strong> 보통이다 · <strong>4</strong> 대체로 그렇다 · <strong>5</strong> 매우 그렇다.[file:18]</div>
+      <div class="scale-legend">
+        <span class="chip">응답 시간: 7~10분</span>
+        <span class="chip">총 48문항</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 설문 폼 -->
+  <form id="bl-form">
+
+    <!-- 1~16번 -->
+    <div class="panel">
+      <div class="section-title">
+        <span class="label">I. 설득 행동 (1–16번)</span>
+        <span class="range">문제 해결 · 구조화 · 카리스마 · 감성 합일.[file:18]</span>
+      </div>
+      <table class="survey">
+        <thead>
+          <tr>
+            <th style="width:40px;">번호</th>
+            <th>문항</th>
+            <th style="width:210px;">점수 선택</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-1-16">
+        </tbody>
+      </table>
+      <div class="error" id="error-1-16"></div>
+    </div>
+
+    <!-- 17~32번 -->
+    <div class="panel">
+      <div class="section-title">
+        <span class="label">II. 상호작용 행동 (17–32번)</span>
+        <span class="range">구조·보상·질문·라포·비전 공유.[file:18]</span>
+      </div>
+      <table class="survey">
+        <thead>
+          <tr>
+            <th style="width:40px;">번호</th>
+            <th>문항</th>
+            <th style="width:210px;">점수 선택</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-17-32">
+        </tbody>
+      </table>
+      <div class="error" id="error-17-32"></div>
+    </div>
+
+    <!-- 33~48번 -->
+    <div class="panel">
+      <div class="section-title">
+        <span class="label">III. 설득·감성 통합 행동 (33–48번)</span>
+        <span class="range">논리 · 압력 · 경청 · 이미지 · 열정.[file:18]</span>
+      </div>
+      <table class="survey">
+        <thead>
+          <tr>
+            <th style="width:40px;">번호</th>
+            <th>문항</th>
+            <th style="width:210px;">점수 선택</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-33-48">
+        </tbody>
+      </table>
+      <div class="error" id="error-33-48"></div>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn btn-outline" id="resetBtn">초기화</button>
+      <button type="button" class="btn btn-primary" id="submitBtn">
+        진단 결과 보기
+        <span style="font-size:1.1rem;">➜</span>
+      </button>
+    </div>
+    <p class="hint-text">※ 문항을 모두 응답해야 결과가 계산됩니다.</p>
+
+  </form>
+
+  <!-- 결과 패널 -->
+  <div class="panel" id="result-panel">
+    <div class="result-header">
+      <h2>Balance Leadership 진단 결과</h2>
+      <span>하위역량 레이더 + 4대 축 막대그래프</span>
+    </div>
+
+    <!-- 그래프 영역 -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:18px;">
+      <div>
+        <h3 style="font-size:0.95rem;margin:0 0 6px;">하위역량 방사형 그래프</h3>
+        <canvas id="radarCanvas" width="360" height="360" style="width:100%;max-width:420px;"></canvas>
+      </div>
+      <div>
+        <h3 style="font-size:0.95rem;margin:0 0 6px;">4대 축 합계 막대그래프</h3>
+        <canvas id="barCanvas" width="360" height="360" style="width:100%;max-width:420px;"></canvas>
+      </div>
+    </div>
+
+    <!-- 하위역량 카드 -->
+    <div class="result-grid" id="result-grid"></div>
+    <p class="hint-text">
+      방사형 그래프는 18개 세부 역량의 상대적 강·약을, 막대그래프는 논리적 설득·카리스마·자각유도·감성합일 네 축의 균형을 보여줍니다.[file:18]
+    </p>
+  </div>
+
+</div>
+
+<script>
+  // ───────── 문항 텍스트 ─────────
+  const questions = {
+    1:  "당면한 문제 해결에 도움이 되는 구체적 방안을 제안한다.[file:18]",
+    2:  "어떤 말을 하고자 하는지 사전에 전체 개요를 알려준다.[file:18]",
+    3:  "제안이 성공할 수 있다는 근거를 논리적으로 제시한다.[file:18]",
+    4:  "이야기 마지막에 전체 내용을 짧게 요약해 준다.[file:18]",
+    5:  "확신 있는 모습으로 기대·요청 사항을 직접적으로 전달한다.[file:18]",
+    6:  "요구사항이 받아들여지지 않을 때 실망감을 솔직히 표현한다.[file:18]",
+    7:  "요구를 수락할 경우 얻을 보상을 분명히 알려준다.[file:18]",
+    8:  "상대방이 잘 해낼 것이라는 신뢰를 표현한다.[file:18]",
+    9:  "주장을 앞세우지 않고 질문으로 상황을 유도한다.[file:18]",
+    10: "상대방의 말을 다시 진술·요약하여 잘 듣고 있음을 보여준다.[file:18]",
+    11: "잘 해내기 위해 필요한 것이 무엇인지 질문한다.[file:18]",
+    12: "입장이 팽팽할 때 잠시 쉬자고 제안한다.[file:18]",
+    13: "상대와 유사한 것(취미·경험 등)을 찾아 공유한다.[file:18]",
+    14: "상대와의 과거 경험·일화를 사실적으로 묘사해 들려준다.[file:18]",
+    15: "자신의 감정·생각을 솔직히 표현해 신뢰를 구축한다.[file:18]",
+    16: "자신의 꿈과 비전을 상대방과 공유한다.[file:18]",
+
+    17: "상대방이 해야 할 일을 분명하게 제안한다.[file:18]",
+    18: "이야기의 시작·본론·결말을 나누어 구조화해서 말한다.[file:18]",
+    19: "제안한 일을 통해 얻게 될 이익을 설명해 준다.[file:18]",
+    20: "핵심 메시지를 중요한 키워드로 정리해 마무리한다.[file:18]",
+    21: "원하는 바를 강력하고 구체적으로 지시한다.[file:18]",
+    22: "요청이 받아들여졌을 때 감사함을 분명히 표현한다.[file:18]",
+    23: "요구를 거절할 경우 불이익이 있을 수 있음을 경고한다.[file:18]",
+    24: "상대가 다른 사람보다 더 잘할 수 있음을 상기시킨다.[file:18]",
+    25: "가르치기보다 질문을 통해 스스로 답을 찾게 이끈다.[file:18]",
+    26: "발언 내용뿐 아니라 숨은 감정에도 귀를 기울인다.[file:18]",
+    27: "문제 해결을 위한 좋은 방법이 있으면 알려달라고 요청한다.[file:18]",
+    28: "해결 의지를 표현하면 고마움과 지지를 보여준다.[file:18]",
+    29: "자유롭게 의견을 낼 수 있는 부드러운 분위기를 만든다.[file:18]",
+    30: "그림을 그리듯 상세한 표현으로 몰입을 이끌어낸다.[file:18]",
+    31: "자신의 과거 경험·실패 사례를 솔직히 이야기한다.[file:18]",
+    32: "미래에 대한 희망과 열망을 표현한다.[file:18]",
+
+    33: "문제 해결을 위한 구체적·실행 가능한 방안을 제시한다.[file:18]",
+    34: "이야기가 길어질 때 ‘첫째, 둘째’로 구분해 말한다.[file:18]",
+    35: "상대 입장·이익에 부합하는 논리적 근거를 제시한다.[file:18]",
+    36: "마무리 시 요청 사항을 다시 한 번 짧게 상기시킨다.[file:18]",
+    37: "이야기할 때 에너지로 분위기를 이끈다.[file:18]",
+    38: "요구가 관철되지 않았을 때 섭섭함을 분명히 표현한다.[file:18]",
+    39: "요구 수용 시 직무 관련 혜택을 제공하겠다고 말한다.[file:18]",
+    40: "상대에 대한 믿음을 표현하며 격려한다.[file:18]",
+    41: "가벼운 질문으로 대화를 부드럽게 시작한다.[file:18]",
+    42: "본인과 다른 의견에도 즉각 반대나 비판을 삼간다.[file:18]",
+    43: "상대가 생각하는 해결책은 무엇인지 물어본다.[file:18]",
+    44: "해결책이 없을 때 더 구체적인 실행 방안을 제시한다.[file:18]",
+    45: "좋은 감정을 느끼도록 우호적으로 행동한다.[file:18]",
+    46: "자신이 꿈꾸는 미래 비전을 상세히 설명한다.[file:18]",
+    47: "논리보다 감성적인 분위기로 대화를 즐긴다.[file:18]",
+    48: "자신의 열정과 비전을 솔직하게 표현한다.[file:18]"
+  };
+
+  // ───────── 하위역량 정의: 3문항 합 (예: 제안 = 1+17+33) ─────────
+  const subScales = {
+    proposal:      { name: "제안",         formula: [1, 17, 33] },
+    structuring:   { name: "구조화",       formula: [2, 18, 34] },
+    logic:         { name: "논리",         formula: [3, 19, 35] },
+    closing:       { name: "결론",         formula: [4, 20, 36] },
+
+    charisma:      { name: "카리스마",     formula: [5, 21, 37] },
+    emotionImage:  { name: "감정 형상화",   formula: [14, 30, 46] },
+    reward:        { name: "보상",         formula: [7, 23, 39] },
+    pressure:      { name: "압력",         formula: [6, 22, 38] },
+
+    positiveLead:  { name: "긍정 유도",     formula: [8, 24, 40] },
+    questioning:   { name: "질문",         formula: [9, 25, 41] },
+    listening:     { name: "경청",         formula: [10, 26, 42] },
+    statement:     { name: "진술 유도",     formula: [11, 27, 43] },
+
+    support:       { name: "지지 강화",     formula: [12, 28, 44] },
+    exit:          { name: "이탈",         formula: [29, 45, 47] },
+    rapport:       { name: "라포 형성",     formula: [13, 29, 45] },
+    image:         { name: "이미지 제시",   formula: [14, 30, 46] },
+    selfOpen:      { name: "자기 노출",     formula: [15, 31, 47] },
+    vision:        { name: "비전 결의",     formula: [16, 32, 48] }
+  };
+
+  // ───────── 4대 축 정의 (논리적 설득·카리스마·자각유도·감성합일) ─────────
+  const fourAxes = {
+    logicalPersuasion: { // 논리적 설득: 제안·구조화·논리·결론
+      name: "논리적 설득",
+      subs: ["proposal", "structuring", "logic", "closing"]
+    },
+    charismaAxis: { // 카리스마 축
+      name: "카리스마",
+      subs: ["charisma", "emotionImage"]
+    },
+    selfAwarenessGuide: { // 자각유도 축
+      name: "자각유도",
+      subs: ["questioning", "listening", "statement"]
+    },
+    emotionalUnity: { // 감성합일 축
+      name: "감성합일",
+      subs: ["support", "rapport", "image", "selfOpen", "vision"]
+    }
+  };
+
+  // ───────── 개발 방향 코멘트 ─────────
+  function devSuggestion(key, score) {
+    const s = score;
+    const low = s <= 7;
+    const mid = s > 7 && s <= 10;
+    const high = s > 10;
+    switch (key) {
+      case "proposal":
+        if (low)  return "좋은 아이디어를 ‘실행 가능한 제안’으로까지 떨어뜨리는 연습이 필요합니다. 회의마다 한 가지는 구체적 제안 문장으로 마무리해 보세요.";
+        if (mid)  return "상황 진단과 해결책 제안을 균형 있게 하고 있습니다. 제안 후 후속 액션(담당·기한)을 더 명확히 하면 설득력이 높아집니다.";
+        if (high) return "문제 해결 제안을 매우 자주 활용하는 스타일입니다. 다만 과도한 주도는 구성원의 자율성을 줄일 수 있으므로 질문과 참여를 병행해 보세요.";
+        break;
+      case "structuring":
+        if (low)  return "내용은 좋지만 흐름이 산만하게 느껴질 수 있습니다. ‘결론–이유–사례’ 구조로 1분 안에 설명하는 연습을 추천합니다.";
+        if (mid)  return "핵심 구조화는 적절히 하고 있습니다. 중요한 메시지는 슬라이드 한 장, 문장 세 줄 안에 담아보는 훈련이 도움이 됩니다.";
+        if (high) return "메시지 구조화에 강점이 있습니다. 스토리텔링 요소(갈등–전환–결말)를 더하면 설득과 몰입이 함께 강화됩니다.";
+        break;
+      case "logic":
+        if (low)  return "논리적 근거 제시가 상대적으로 약해 보입니다. 데이터·사례를 1~2개라도 곁들이는 루틴을 만들어 보세요.";
+        if (mid)  return "논리와 직관의 균형이 비교적 잘 맞습니다. 상대의 관점(위험, 비용)을 미리 반영한 ‘역질문’ 준비가 도움이 됩니다.";
+        if (high) return "논리 기반 설득에 매우 강합니다. 다만 감정·관계 요소를 함께 고려하지 않으면 ‘차갑다’는 인상을 줄 수 있어 주의가 필요합니다.";
+        break;
+      case "closing":
+        if (low)  return "마무리가 흐릿해 메시지가 남지 않을 수 있습니다. 회의마다 ‘오늘의 한 문장’을 정리해 공유하는 습관을 들여 보세요.";
+        if (mid)  return "핵심 요약과 요청 정리가 어느 정도 이루어지고 있습니다. 실행 주체·기한을 한 번 더 확인하면 실행력이 높아집니다.";
+        if (high) return "결론 정리와 요청 명확화에 강점이 있어 실행을 잘 견인할 수 있습니다. 다만 지나친 압박감으로 느껴지지 않도록 톤을 조절해 보세요.";
+        break;
+      case "charisma":
+        if (low)  return "존재감이 다소 약하게 느껴질 수 있습니다. 목소리 톤·제스처·시선 처리 같은 비언어 요소를 한 가지씩 점검해 보세요.";
+        if (mid)  return "필요할 때 에너지를 끌어올려 메시지를 전달하고 있습니다. 중요한 장면에서 의도적으로 ‘강약 조절’을 연습하면 설득력이 더 살아납니다.";
+        if (high) return "카리스마가 강점입니다. 다만 상대의 의견을 흡수하는 ‘부드러운 카리스마’를 함께 개발하면 지속 가능한 영향력이 올라갑니다.";
+        break;
+      case "emotionImage":
+        if (low)  return "스토리와 이미지로 설득하는 힘이 부족할 수 있습니다. 비유·그림·사례를 한 문장만이라도 덧붙이는 연습을 해보세요.";
+        if (mid)  return "필요할 때 감정과 이미지를 적절히 활용하고 있습니다. 전략적으로 기억에 남길 메시지에만 이미지를 집중 사용해 보세요.";
+        if (high) return "감성적 이미지로 공감을 잘 이끌어내는 스타일입니다. 다만 구체적 실행계획 없이 감성에만 머물지 않도록 논리 보완이 필요합니다.";
+        break;
+      case "reward":
+        if (low)  return "보상 프레임을 거의 사용하지 않아 동기부여 기회를 놓칠 수 있습니다. 작은 인정·피드백도 ‘보상’으로 인식하고 활용해 보세요.";
+        if (mid)  return "보상과 내적 동기를 균형 있게 사용하고 있습니다. 금전·직무·성장 기회를 각각 어떤 상황에 써야 하는지 레퍼토리를 정리해 보면 좋습니다.";
+        if (high) return "보상을 적극적으로 사용하는 리더입니다. 단기 보상에만 의존하지 않고 의미·성장과 연결하는 스토리를 함께 주는 것이 중요합니다.";
+        break;
+      case "pressure":
+        if (low)  return "압박을 거의 사용하지 않아 때때로 추진력이 약하게 보일 수 있습니다. ‘부드럽지만 분명한’ 기준과 마감선을 제시하는 법을 연습해 보세요.";
+        if (mid)  return "필요 시 마감과 기준을 분명히 하면서도 과도한 압박은 피하는 편입니다. 팀 상황에 따라 압박 강도를 세밀하게 조절하는 감각이 중요합니다.";
+        if (high) return "강한 압박으로 단기 성과를 만드는 스타일입니다. 장기적으로는 소진과 반발을 부를 수 있어, 지지와 인정의 비율을 함께 높여야 합니다.";
+        break;
+      default:
+        if (low)  return "이 역량은 현재 덜 활용되는 편입니다. 의도적으로 한 주에 한 번, 이 행동을 실험해 보며 나만의 스타일을 찾아보는 것을 권장합니다.";
+        if (mid)  return "해당 역량을 상황에 따라 적절히 사용하고 있습니다. 잘 되는 상황과 그렇지 않은 상황을 기록해 ‘패턴’을 찾는 것이 다음 단계입니다.";
+        if (high) return "이 역량이 뚜렷한 강점입니다. 다만 한 가지 역량에 과도하게 의존하면 균형이 깨질 수 있으니, 보완 축(반대 성향)을 함께 개발해 보세요.";
+    }
+  }
+
+  // ───────── 테이블 렌더링 ─────────
+  function renderQuestions() {
+    const tbody1 = document.getElementById("tbody-1-16");
+    const tbody2 = document.getElementById("tbody-17-32");
+    const tbody3 = document.getElementById("tbody-33-48");
+
+    for (let i = 1; i <= 16; i++) {
+      tbody1.appendChild(makeRow(i));
+    }
+    for (let i = 17; i <= 32; i++) {
+      tbody2.appendChild(makeRow(i));
+    }
+    for (let i = 33; i <= 48; i++) {
+      tbody3.appendChild(makeRow(i));
+    }
+  }
+
+  function makeRow(num) {
+    const tr = document.createElement("tr");
+    tr.dataset.q = num;
+    const th = document.createElement("th");
+    th.textContent = num;
+    const tdQ = document.createElement("td");
+    tdQ.className = "question";
+    tdQ.textContent = questions[num] || `문항 ${num}`;
+    const tdScale = document.createElement("td");
+    tdScale.className = "scale";
+
+    for (let v = 1; v <= 5; v++) {
+      const wrapper = document.createElement("span");
+      wrapper.className = "radio-pill";
+      const id = `q${num}_${v}`;
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = `q${num}`;
+      input.id = id;
+      input.value = v;
+      const label = document.createElement("label");
+      label.htmlFor = id;
+      label.textContent = v;
+      wrapper.appendChild(input);
+      wrapper.appendChild(label);
+      tdScale.appendChild(wrapper);
+    }
+
+    tr.appendChild(th);
+    tr.appendChild(tdQ);
+    tr.appendChild(tdScale);
+    return tr;
+  }
+
+  // ───────── 응답 수집 ─────────
+  function collectScores() {
+    const scores = {};
+    let allAnswered = true;
+
+    document.querySelectorAll("tbody tr").forEach(tr => {
+      const q = tr.dataset.q;
+      const selected = document.querySelector(`input[name="q${q}"]:checked`);
+      tr.classList.remove("row-error");
+      if (!selected) {
+        allAnswered = false;
+      } else {
+        scores[q] = Number(selected.value);
+      }
+    });
+
+    document.getElementById("error-1-16").textContent = "";
+    document.getElementById("error-17-32").textContent = "";
+    document.getElementById("error-33-48").textContent = "";
+
+    if (!allAnswered) {
+      const missing = [];
+      for (let i = 1; i <= 48; i++) {
+        if (!scores[i]) missing.push(i);
+      }
+      missing.forEach(m => {
+        const tr = document.querySelector(`tr[data-q="${m}"]`);
+        if (tr) tr.classList.add("row-error");
+      });
+      if (missing.some(m => m <= 16)) {
+        document.getElementById("error-1-16").textContent = "1–16번 문항 중 응답하지 않은 항목이 있습니다.";
+      }
+      if (missing.some(m => m >= 17 && m <= 32)) {
+        document.getElementById("error-17-32").textContent = "17–32번 문항 중 응답하지 않은 항목이 있습니다.";
+      }
+      if (missing.some(m => m >= 33)) {
+        document.getElementById("error-33-48").textContent = "33–48번 문항 중 응답하지 않은 항목이 있습니다.";
+      }
+      return null;
+    }
+    return scores;
+  }
+
+  // ───────── Radar Chart ─────────
+  function drawRadarChart(ctx, labels, data) {
+    const size = Math.min(ctx.canvas.width, ctx.canvas.height);
+    const centerX = ctx.canvas.width / 2;
+    const centerY = ctx.canvas.height / 2;
+    const maxRadius = size * 0.38;
+    const maxValue = Math.max(...data, 1);
+    const levelCount = 4;
+
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.save();
+    ctx.translate(0.5, 0.5);
+
+    const angleStep = (Math.PI * 2) / labels.length;
+
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 1;
+    for (let l = 1; l <= levelCount; l++) {
+      const radius = (maxRadius / levelCount) * l;
+      ctx.beginPath();
+      for (let i = 0; i < labels.length; i++) {
+        const angle = -Math.PI / 2 + angleStep * i;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = "rgba(255,255,255,0.12)";
+    for (let i = 0; i < labels.length; i++) {
+      const angle = -Math.PI / 2 + angleStep * i;
+      const x = centerX + maxRadius * Math.cos(angle);
+      const y = centerY + maxRadius * Math.sin(angle);
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "#f5f5f7";
+    ctx.font = "11px 'Pretendard', system-ui";
+    for (let i = 0; i < labels.length; i++) {
+      const angle = -Math.PI / 2 + angleStep * i;
+      const radius = maxRadius + 16;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+      const text = labels[i];
+      const metrics = ctx.measureText(text);
+      const tx = x - metrics.width / 2;
+      const ty = y + 4;
+      ctx.fillText(text, tx, ty);
+    }
+
+    ctx.beginPath();
+    for (let i = 0; i < data.length; i++) {
+      const valueRatio = data[i] / maxValue;
+      const radius = maxRadius * valueRatio;
+      const angle = -Math.PI / 2 + angleStep * i;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "rgba(224,185,115,0.25)";
+    ctx.strokeStyle = "rgba(224,185,115,0.9)";
+    ctx.lineWidth = 2;
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  // ───────── Bar Chart ─────────
+  function drawBarChart(ctx, labels, data) {
+    const width = ctx.canvas.width;
+    const height = ctx.canvas.height;
+    ctx.clearRect(0, 0, width, height);
+    ctx.save();
+    ctx.translate(0.5, 0.5);
+
+    const maxValue = Math.max(...data, 1);
+    const padding = { top: 20, right: 20, bottom: 40, left: 32 };
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
+
+    ctx.strokeStyle = "rgba(255,255,255,0.2)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding.left, padding.top);
+    ctx.lineTo(padding.left, padding.top + chartHeight);
+    ctx.lineTo(padding.left + chartWidth, padding.top + chartHeight);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(255,255,255,0.35)";
+    ctx.font = "10px 'Pretendard', system-ui";
+    const steps = 3;
+    for (let i = 0; i <= steps; i++) {
+      const value = (maxValue / steps) * i;
+      const y = padding.top + chartHeight - (chartHeight * (value / maxValue));
+      ctx.strokeStyle = "rgba(255,255,255,0.08)";
+      ctx.beginPath();
+      ctx.moveTo(padding.left, y);
+      ctx.lineTo(padding.left + chartWidth, y);
+      ctx.stroke();
+      ctx.fillStyle = "rgba(255,255,255,0.5)";
+      ctx.fillText(Math.round(value), 4, y + 3);
+    }
+
+    const barWidth = chartWidth / (labels.length * 1.7);
+    const gap = barWidth * 0.7;
+    const totalBarSpace = labels.length * (barWidth + gap);
+
+    let startX = padding.left + (chartWidth - totalBarSpace + gap) / 2;
+
+    for (let i = 0; i < labels.length; i++) {
+      const value = data[i];
+      const barHeight = chartHeight * (value / maxValue);
+      const x = startX + i * (barWidth + gap);
+      const y = padding.top + chartHeight - barHeight;
+
+      const grd = ctx.createLinearGradient(x, y, x, y + barHeight);
+      grd.addColorStop(0, "#e0b973");
+      grd.addColorStop(1, "#c9883c");
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + barWidth, y);
+      ctx.lineTo(x + barWidth, y + barHeight);
+      ctx.lineTo(x, y + barHeight);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "#f5f5f7";
+      ctx.font = "10px 'Pretendard', system-ui";
+      const text = String(Math.round(value));
+      const tw = ctx.measureText(text).width;
+      ctx.fillText(text, x + barWidth / 2 - tw / 2, y - 4);
+
+      ctx.save();
+      ctx.translate(x + barWidth / 2, padding.top + chartHeight + 14);
+      ctx.rotate(-Math.PI / 9);
+      ctx.fillStyle = "#d3d3dd";
+      const lw = ctx.measureText(labels[i]).width;
+      ctx.fillText(labels[i], -lw / 2, 0);
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
+  // ───────── 결과 빌드 + 그래프 그리기 ─────────
+  function buildResults(scores) {
+    const grid = document.getElementById("result-grid");
+    grid.innerHTML = "";
+
+    const resultArr = [];
+    for (const key in subScales) {
+      const info = subScales[key];
+      const total = info.formula.reduce((sum, q) => sum + (scores[q] || 0), 0);
+      resultArr.push({ key, name: info.name, total, items: info.formula });
+    }
+    resultArr.sort((a, b) => b.total - a.total);
+
+    resultArr.forEach(r => {
+      const card = document.createElement("div");
+      card.className = "result-card";
+
+      const h3 = document.createElement("h3");
+      h3.innerHTML = `<span>${r.name}</span><span class="score">${r.total}점</span>`;
+      const sub = document.createElement("div");
+      sub.className = "subformula";
+      sub.textContent = `제안식: ${r.name} = ${r.items.join(" + ")} (각 문항 점수 합)`;
+      const badge = document.createElement("div");
+      badge.className = "badge-soft";
+      badge.textContent = r.total <= 7 ? "개발 우선 영역" : (r.total >= 11 ? "핵심 강점" : "안정 영역");
+      const dev = document.createElement("div");
+      dev.className = "dev-text";
+      dev.textContent = devSuggestion(r.key, r.total);
+
+      card.appendChild(h3);
+      card.appendChild(sub);
+      card.appendChild(badge);
+      card.appendChild(dev);
+      grid.appendChild(card);
+    });
+
+    const radarLabels = resultArr.map(r => r.name);
+    const radarData = resultArr.map(r => r.total);
+
+    const barLabels = [];
+    const barData = [];
+    for (const fk in fourAxes) {
+      const axis = fourAxes[fk];
+      let sum = 0;
+      axis.subs.forEach(subKey => {
+        const found = resultArr.find(r => r.key === subKey);
+        if (found) sum += found.total;
+      });
+      barLabels.push(axis.name);
+      barData.push(sum);
+    }
+
+    const radarCanvas = document.getElementById("radarCanvas");
+    const barCanvas = document.getElementById("barCanvas");
+    if (radarCanvas && barCanvas) {
+      const rctx = radarCanvas.getContext("2d");
+      const bctx = barCanvas.getContext("2d");
+      drawRadarChart(rctx, radarLabels, radarData);
+      drawBarChart(bctx, barLabels, barData);
+    }
+
+    document.getElementById("result-panel").style.display = "block";
+    document.getElementById("result-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // ───────── 이벤트 바인딩 ─────────
+  document.getElementById("submitBtn").addEventListener("click", () => {
+    const scores = collectScores();
+    if (!scores) return;
+    buildResults(scores);
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    document.querySelectorAll("input[type=radio]").forEach(r => r.checked = false);
+    document.querySelectorAll("tbody tr").forEach(tr => tr.classList.remove("row-error"));
+    document.getElementById("error-1-16").textContent = "";
+    document.getElementById("error-17-32").textContent = "";
+    document.getElementById("error-33-48").textContent = "";
+    document.getElementById("result-panel").style.display = "none";
+  });
+
+  renderQuestions();
+</script>
+
+</body>
+</html>
